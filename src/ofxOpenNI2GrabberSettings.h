@@ -16,8 +16,6 @@ public:
 	bool	doRawDepth;				// capture raw Depth info
 	bool	doColor;				// use RGB camera
 	bool	doIr;					
-	bool	doPointCloud;			// option for point cloud
-	bool	doPointCloudColor;		// color point cloud
 	PixelFormat depthPixelFormat;	//PIXEL_FORMAT_DEPTH_1_MM, PIXEL_FORMAT_DEPTH_100_UM, PIXEL_FORMAT_SHIFT_9_2, PIXEL_FORMAT_SHIFT_9_3
 	PixelFormat colorPixelFormat;	//PIXEL_FORMAT_RGB888, PIXEL_FORMAT_YUV422, PIXEL_FORMAT_GRAY8, PIXEL_FORMAT_GRAY16, PIXEL_FORMAT_JPEG
 	PixelFormat irPixelFormat;		//PIXEL_FORMAT_GRAY16
@@ -38,8 +36,6 @@ public:
 		colorPixelFormat = PIXEL_FORMAT_RGB888;
 		irPixelFormat = PIXEL_FORMAT_GRAY16;
 		doRegisterDepthToColor = true;
-		doPointCloud = true;			// option for point cloud
-		doPointCloudColor = true;		// color point cloud
 		useOniFile = false;
 		oniFilePath = "UNDEFINED";
 	}

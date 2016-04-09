@@ -81,7 +81,7 @@ bool ofxOpenNI2Grabber::setup(ofxOpenNI2GrabberSettings settings_)
 		
 	}
 	isReady = true;
-	startThread(false, false);
+	startThread();
 	return isReady;
 }
 
@@ -166,13 +166,26 @@ ofTexture & ofxOpenNI2Grabber::getIRTextureReference()
 {
 	return irSource.texture;
 }
-
+ofxOpenNI2Grabber::~ofxOpenNI2Grabber()
+{
+    
+    if (isReady) 
+    {
+        close();
+    }
+}
 bool ofxOpenNI2Grabber::close()
 {
 	ofLogVerbose() << "ofxOpenNI2Grabber::close";
+    waitForThread(true);
+    if(isThreadRunning())
+    {
+        stopThread();
+    }
+    
 	isReady = false;
 	//stopThread();
-	waitForThread(true);
+	
     OpenNI::shutdown();
 	if (depthSource.isOn) depthSource.close();
 	if (rgbSource.isOn) rgbSource.close();

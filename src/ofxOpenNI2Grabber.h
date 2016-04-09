@@ -23,6 +23,7 @@ public ofThread
 public:
 
 	ofxOpenNI2Grabber();
+    ~ofxOpenNI2Grabber();
 	bool setup(ofxOpenNI2GrabberSettings _settings);
 	void readFrame();
 	void update();
