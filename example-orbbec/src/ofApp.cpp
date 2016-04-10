@@ -5,8 +5,8 @@ void ofApp::setup()
 {
     ofSetLogLevel(OF_LOG_VERBOSE);
     
-    cameraWidth = 320;
-    cameraHeight = 240;
+    cameraWidth = 640;
+    cameraHeight = 480;
     
 
     settings.width 	= cameraWidth;
@@ -14,7 +14,7 @@ void ofApp::setup()
     settings.fps 	= 30;
     settings.doDepth = true;
     settings.doRawDepth = true;
-    settings.doColor = false;
+    settings.doColor = true;
     settings.doIr = false;
     
     settings.depthPixelFormat = PIXEL_FORMAT_DEPTH_1_MM;
@@ -50,21 +50,25 @@ void ofApp::draw()
 
 
     ofPushMatrix();
+    int offset = 0;
     if (settings.doColor)
     {
-        oniGrabber.getRGBTextureReference().draw(0, 0);
+        oniGrabber.getRGBTextureReference().draw(offset, 0);
+        offset+=cameraWidth;
     }
     
     if (settings.doDepth)
     {
-        ofTranslate(cameraWidth, 0);
+        ofTranslate(offset, 0);
         oniGrabber.getDepthTextureReference().draw(0, 0);
+        offset+=cameraWidth;
     }
     
     if (settings.doIr)
     {
-        ofTranslate(cameraWidth, 0);
+        ofTranslate(offset, 0);
         oniGrabber.getIRTextureReference().draw(0, 0);
+        offset+=cameraWidth;
     }
     ofPopMatrix();
   
