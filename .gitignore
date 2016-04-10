@@ -1,11 +1,7 @@
-*.mkv
-*.h264
-/libs
 obj
 *.app
 */bin/*
 !*/bin/data
+!*/bin/OpenNI2
 *._*
-*2013*.jpg
-bin/data/*.mp4
 example-*/bin/example-*
