@@ -177,12 +177,12 @@ ofxOpenNI2Grabber::~ofxOpenNI2Grabber()
 bool ofxOpenNI2Grabber::close()
 {
 	ofLogVerbose() << "ofxOpenNI2Grabber::close";
-    waitForThread(true);
-    if(isThreadRunning())
+    
+    /*if(isThreadRunning())
     {
         stopThread();
-    }
-    
+    }*/
+    waitForThread(true);
 	isReady = false;
 	//stopThread();
 	
