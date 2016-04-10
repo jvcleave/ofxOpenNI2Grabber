@@ -1,16 +1,15 @@
 WORK IN PROGRESS
 
-OpenNI2 wrapper for openFrameworks for the Mac/Raspberry Pi
+OpenNI2 wrapper for openFrameworks for Raspberry Pi
+
+Tested with:
+openFrameworks 0.9.3
+RPI2 (GPU memory 384)
+Raspbian
+Xtion Pro
+Orbbec Astra
 
 Note:
+OpenNI2 folder needs to be copied into the projects bin folder (not bin/data). See examples
 
-OSX:
 
-When using project generator with this addon, several project file changes must be made:
-
-1. Remove all *.dylib entries from the search path.
-2. Add the following to the "Run Script" build phase (just under the libmodex entry).
-
-```
-cp -R ../../../addons/ofxOpenNI2Grabber/libs/openni2/libs/osx/OpenNI2 "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/";
-```
