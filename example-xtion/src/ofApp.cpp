@@ -5,15 +5,15 @@ void ofApp::setup()
 {
     ofSetLogLevel(OF_LOG_VERBOSE);
     
-    cameraWidth = 320;
-    cameraHeight = 240;
+    cameraWidth = 640;
+    cameraHeight = 480;
     
 
     settings.width 	= cameraWidth;
     settings.height = cameraHeight;
     settings.fps 	= 30;
     settings.doDepth = true;
-    settings.doRawDepth = false;
+    settings.doRawDepth = true;
     settings.doColor = true;
     settings.doIr = false;
     
@@ -49,25 +49,31 @@ void ofApp::draw()
 {
 
 
+    
     ofPushMatrix();
+    int offset = 0;
     if (settings.doColor)
     {
-        oniGrabber.getRGBTextureReference().draw(0, 0);
+        oniGrabber.getRGBTextureReference().draw(offset, 0);
+        offset+=cameraWidth;
     }
     
     if (settings.doDepth)
     {
-        ofTranslate(cameraWidth, 0);
+        ofTranslate(offset, 0);
         oniGrabber.getDepthTextureReference().draw(0, 0);
+        offset+=cameraWidth;
     }
     
     if (settings.doIr)
     {
-        ofTranslate(cameraWidth, 0);
+        ofTranslate(offset, 0);
         oniGrabber.getIRTextureReference().draw(0, 0);
+        offset+=cameraWidth;
     }
     ofPopMatrix();
-  
+    
+
     
     ofDrawBitmapStringHighlight(ofToString(ofGetFrameRate()) + " fps", 40, 40, ofColor(0, 0, 0, 128), ofColor::yellow);
 }
