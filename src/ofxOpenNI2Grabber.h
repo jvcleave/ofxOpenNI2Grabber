@@ -24,7 +24,8 @@ public:
 
 	ofxOpenNI2Grabber();
     ~ofxOpenNI2Grabber();
-	bool setup(ofxOpenNI2GrabberSettings _settings);
+	bool setup(ofxOpenNI2GrabberSettings, bool startImmediately = true);
+    void start();
 	void readFrame();
 	void update();
 	void draw();
@@ -44,16 +45,34 @@ public:
 	
 	ofVec3f convertDepthToWorld(int depthX, int depthY);
 	
-	ofPixels & getDepthPixels();
-	ofShortPixels & getDepthRawPixels();
-	ofPixels & getRGBPixels();
-	ofPixels & getIRPixels();
+	ofPixels&       getDepthPixels();
+	ofShortPixels&  getDepthRawPixels();
+	ofPixels&       getRGBPixels();
+	ofPixels&       getIRPixels();
 	
-	ofTexture & getDepthTextureReference();
-	ofTexture & getRGBTextureReference();
-	ofTexture & getIRTextureReference();
+	ofTexture& getDepthTextureReference();
+	ofTexture& getRGBTextureReference();
+	ofTexture& getIRTextureReference();
 	
+    
+    bool isIRAvailable()
+    {
+        return irAvailable;
+    }
+    
+    bool isDepthAvailable()
+    {
+        return depthAvailable;
+    }
+    
+    bool isColorAvailable()
+    {
+        return colorAvailable;
+    }
+    
 protected:
 	void threadedFunction();
-
+    bool irAvailable;
+    bool colorAvailable;
+    bool depthAvailable;
 };

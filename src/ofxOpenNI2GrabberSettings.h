@@ -22,7 +22,10 @@ public:
 	bool	doRegisterDepthToColor;
 	bool	useOniFile;
 	string oniFilePath; 
-	
+    bool doColorDoubleBuffering;
+    bool doDepthDoubleBuffering;
+    bool doIRDoubleBuffering;
+    
 	ofxOpenNI2GrabberSettings()
 	{
 		width = 640;
@@ -38,5 +41,18 @@ public:
 		doRegisterDepthToColor = true;
 		useOniFile = false;
 		oniFilePath = "UNDEFINED";
+        
+        doColorDoubleBuffering = true;
+        doDepthDoubleBuffering = true;
+        doIRDoubleBuffering = true;
 	}
+    
+    void validate()
+    {
+        if (doColor && doIr) 
+        {
+            ofLogError() << "Color and IR cannot be used together, DISABLING IR";
+            doIr = false;
+        }
+    }
 };

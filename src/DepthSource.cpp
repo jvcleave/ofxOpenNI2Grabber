@@ -8,9 +8,6 @@ DepthSource::DepthSource()
 	currentPixels = NULL;
 	deviceMaxDepth = 0;
 	doDoubleBuffering = true;
-#ifdef TARGET_OPENGLES
-	doDoubleBuffering = false;
-#endif
 	doRawDepth = false;
 	isOn = false;
     nearClipping=400;

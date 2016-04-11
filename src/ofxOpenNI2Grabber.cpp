@@ -11,13 +11,20 @@
 
 ofxOpenNI2Grabber::ofxOpenNI2Grabber()
 {
-	isReady = false;	
+	isReady = false;
+    irAvailable = false;
+    colorAvailable = false;
+    depthAvailable = false;
+
 }
 
-bool ofxOpenNI2Grabber::setup(ofxOpenNI2GrabberSettings settings_)
+
+bool ofxOpenNI2Grabber::setup(ofxOpenNI2GrabberSettings settings_, bool startImmediately /*default = true */)
 {
+    
 	settings = settings_;
-	
+    settings.validate();
+    
 	Status status = STATUS_OK;
 
 	status = OpenNI::initialize();
@@ -42,49 +49,79 @@ bool ofxOpenNI2Grabber::setup(ofxOpenNI2GrabberSettings settings_)
 	
 	if (settings.doDepth) 
 	{
-		
-		if (depthSource.setup(deviceController))
+		depthSource.doDoubleBuffering = settings.doDepthDoubleBuffering;
+        
+        depthAvailable = depthSource.setup(deviceController);
+		if (depthAvailable)
 		{
 			streams.push_back(&depthSource.videoStream);
 		}else 
 		{
-			settings.doDepth = false;
+			ofLogError() << "DEPTH SOURCE FAILED";
 		}
 	}
 	
 	if (settings.doColor) 
 	{
-		if (rgbSource.setup(deviceController)) 
+        rgbSource.doDoubleBuffering = settings.doColorDoubleBuffering;
+
+        colorAvailable = rgbSource.setup(deviceController);
+		if (colorAvailable) 
 		{
 			streams.push_back(&rgbSource.videoStream);
 		}else 
 		{
-			settings.doColor = false;
+			ofLogError() << "RGB SOURCE FAILED";
 		}
 	}
-	else if(settings.doIr){
-		if(irSource.setup(deviceController))
+	if(settings.doIr)
+    {
+        irSource.doDoubleBuffering = settings.doIRDoubleBuffering;
+
+        irAvailable = irSource.setup(deviceController);
+		if(irAvailable)
 		{
 			streams.push_back(&irSource.videoStream);
 		}
-		else{
-			settings.doIr = false;
+		else
+        {
+            ofLogError() << "IR SOURCE FAILED";
 		}
 	}
 	
 	if(settings.doRegisterDepthToColor)
 	{
-		if (settings.doDepth && settings.doColor)
+		if (depthAvailable && colorAvailable)
 		{
 			deviceController.registerDepthToColor();
 		}
 		
 	}
 	isReady = true;
-	startThread();
+    if (startImmediately) 
+    {
+        start();
+    }
 	return isReady;
 }
 
+
+void ofxOpenNI2Grabber::start()
+{
+    if (!isReady)
+    {
+        ofLogError() << "NOT READY, Calling setup for you";
+        setup(settings);
+    }
+    if (!isThreadRunning()) 
+    {
+        startThread();
+    }else
+    {
+        ofLogError() << "ALREADY RUNNING";
+    }
+    
+}
 void ofxOpenNI2Grabber::threadedFunction()
 {
 	while (isThreadRunning()) 
@@ -101,9 +138,13 @@ void ofxOpenNI2Grabber::threadedFunction()
 
 ofVec3f ofxOpenNI2Grabber::convertDepthToWorld(int depthX, int depthY){	
 	ofVec3f result;
-	CoordinateConverter::convertDepthToWorld(depthSource.videoStream, depthX, depthY,
+	CoordinateConverter::convertDepthToWorld(depthSource.videoStream,
+                                             depthX,
+                                             depthY,
 											 (DepthPixel)(depthSource.currentRawPixels->getPixels()[depthY * depthSource.width + depthX]),
-											 &result.x,&result.y,&result.z );
+											 &result.x,
+                                             &result.y,
+                                             &result.z );
 	return result;
 }
 
@@ -122,13 +163,13 @@ void ofxOpenNI2Grabber::draw()
 	if (depthSource.isOn) depthSource.draw();
 }
 
-ofPixels & ofxOpenNI2Grabber::getDepthPixels()
+ofPixels& ofxOpenNI2Grabber::getDepthPixels()
 {
 	Poco::ScopedLock<ofMutex> lock(mutex);
 	return *depthSource.currentPixels;
 }
 
-ofShortPixels & ofxOpenNI2Grabber::getDepthRawPixels()
+ofShortPixels& ofxOpenNI2Grabber::getDepthRawPixels()
 {
 	Poco::ScopedLock<ofMutex> lock(mutex);
 	
@@ -140,29 +181,29 @@ ofShortPixels & ofxOpenNI2Grabber::getDepthRawPixels()
 	return *depthSource.currentRawPixels;
 }
 
-ofPixels & ofxOpenNI2Grabber::getRGBPixels()
+ofPixels& ofxOpenNI2Grabber::getRGBPixels()
 {
 	Poco::ScopedLock<ofMutex> lock(mutex);
 	return *rgbSource.currentPixels;
 }
 
-ofPixels & ofxOpenNI2Grabber::getIRPixels()
+ofPixels& ofxOpenNI2Grabber::getIRPixels()
 {
 	Poco::ScopedLock<ofMutex> lock(mutex);
 	return *irSource.currentPixels;
 }
 
-ofTexture & ofxOpenNI2Grabber::getDepthTextureReference()
+ofTexture& ofxOpenNI2Grabber::getDepthTextureReference()
 {
 	return depthSource.texture;
 }
 
-ofTexture & ofxOpenNI2Grabber::getRGBTextureReference()
+ofTexture& ofxOpenNI2Grabber::getRGBTextureReference()
 {
 	return rgbSource.texture;
 }
 
-ofTexture & ofxOpenNI2Grabber::getIRTextureReference()
+ofTexture& ofxOpenNI2Grabber::getIRTextureReference()
 {
 	return irSource.texture;
 }
@@ -174,24 +215,22 @@ ofxOpenNI2Grabber::~ofxOpenNI2Grabber()
         close();
     }
 }
+
 bool ofxOpenNI2Grabber::close()
 {
 	ofLogVerbose() << "ofxOpenNI2Grabber::close";
-    
-    /*if(isThreadRunning())
-    {
-        stopThread();
-    }*/
     waitForThread(true);
 	isReady = false;
-	//stopThread();
-	
-    OpenNI::shutdown();
+    
+    irAvailable = false;
+    colorAvailable = false;
+    depthAvailable = false;
+
 	if (depthSource.isOn) depthSource.close();
 	if (rgbSource.isOn) rgbSource.close();
 	if (irSource.isOn) irSource.close();
 	deviceController.close();
-	
+	OpenNI::shutdown();
 	
 	return isReady;
 	//

@@ -16,9 +16,6 @@ IRSource::IRSource()
 	backPixels = NULL;
 	currentPixels = NULL;
 	doDoubleBuffering = true;
-#ifdef TARGET_OPENGLES
-	doDoubleBuffering = false;
-#endif
 	isOn = false;
 }
 bool IRSource::setup(DeviceController& deviceController)

@@ -16,9 +16,6 @@ RGBSource::RGBSource()
 	backPixels = NULL;
 	currentPixels = NULL;
 	doDoubleBuffering = true;
-#ifdef TARGET_OPENGLES
-	doDoubleBuffering = false;
-#endif
 	isOn = false;
 }
 bool RGBSource::setup(DeviceController& deviceController)
@@ -77,11 +74,13 @@ void RGBSource::update()
 {
 	texture.loadData(*currentPixels);
 }
+
 void RGBSource::draw()
 {
 	texture.loadData(*currentPixels);
 	texture.draw(0, 0);
 }
+
 void RGBSource::allocateBuffers()
 {
 	videoMode = videoStream.getVideoMode();
