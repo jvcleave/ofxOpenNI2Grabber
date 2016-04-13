@@ -92,20 +92,34 @@ void DepthSource::allocateBuffers()
 	width = videoMode.getResolutionX();
 	height = videoMode.getResolutionY();
 
-	pixels[0].allocate(width, height, OF_IMAGE_COLOR_ALPHA);
-	pixels[1].allocate(width, height, OF_IMAGE_COLOR_ALPHA);
-	pixels[2].allocate(width, height, OF_IMAGE_GRAYSCALE);
-	currentPixels 	= &pixels[0];
-	backPixels 		= &pixels[1];
-	noAlphaPixels 	= &pixels[2];
+    currentPixels = new ofPixels();
+    currentPixels->allocate(width, height, OF_IMAGE_COLOR_ALPHA);
+    
+    noAlphaPixels = new ofPixels();
+    noAlphaPixels->allocate(width, height, OF_IMAGE_GRAYSCALE);
+    
+    if (doDoubleBuffering) 
+    {
+        ofLogVerbose(__func__) << "doDoubleBuffering: " << doDoubleBuffering;
+        backPixels = new ofPixels();
+        backPixels->allocate(width, height, OF_IMAGE_COLOR_ALPHA);
+    }
+ 
+
+    
 	texture.allocate(width, height, GL_RGBA);
 
 	if (doRawDepth)
 	{
-		rawPixels[0].allocate(width, height, OF_PIXELS_MONO);
-		rawPixels[1].allocate(width, height, OF_PIXELS_MONO);
-		currentRawPixels = &rawPixels[0];
-		backRawPixels 	 = &rawPixels[1];
+        currentRawPixels = new ofShortPixels();
+        currentRawPixels->allocate(width, height, OF_PIXELS_MONO);
+        
+        if (doDoubleBuffering) 
+        {
+            ofLogVerbose(__func__) << "doDoubleBuffering: " << doDoubleBuffering;
+            backRawPixels = new ofShortPixels();
+            backRawPixels->allocate(width, height, OF_PIXELS_MONO);
+        }
 	}
 
 }

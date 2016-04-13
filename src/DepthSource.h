@@ -17,12 +17,12 @@ public:
     int farClipping;
 
 	ofTexture texture;
-	ofPixels pixels[3];
+	//ofPixels pixels[3];
 	ofPixels* backPixels;
 	ofPixels* currentPixels;
 	ofPixels* noAlphaPixels;
 
-	ofShortPixels rawPixels[2];
+	//ofShortPixels rawPixels[2];
 	ofShortPixels* backRawPixels;
 	ofShortPixels* currentRawPixels;
 
