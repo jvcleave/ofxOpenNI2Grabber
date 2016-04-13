@@ -13,7 +13,7 @@ void ofApp::setup()
     settings.height = cameraHeight;
     settings.fps 	= 30;
     settings.doDepth = true;
-    settings.doRawDepth = true;
+    settings.doRawDepth = false;
     settings.doColor = true;
     settings.doIr = false;
     
@@ -26,7 +26,7 @@ void ofApp::setup()
     settings.oniFilePath = "UNDEFINED";
 
     settings.doColorDoubleBuffering = true;
-    settings.doDepthDoubleBuffering = true;
+    settings.doDepthDoubleBuffering = false;
     settings.doIRDoubleBuffering = true;
     
 	isReady = oniGrabber.setup(settings);

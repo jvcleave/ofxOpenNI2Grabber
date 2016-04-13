@@ -14,6 +14,7 @@ DepthSource::DepthSource()
     nearClipping=400;
     farClipping=4000;
 }
+
 bool DepthSource::setup(DeviceController& deviceController)
 {
 	doRawDepth = deviceController.settings.doRawDepth;
@@ -72,7 +73,9 @@ bool DepthSource::setup(DeviceController& deviceController)
 		isOn = true;
 	}else
 	{
+       
 		ofLogError() << "DepthSource is INVALID";
+        isOn = false;
 	}
 
 
@@ -87,6 +90,7 @@ void DepthSource::draw()
 {
 	texture.draw(width, 0);
 }
+
 void DepthSource::allocateBuffers()
 {
 	videoMode = videoStream.getVideoMode();
@@ -94,8 +98,7 @@ void DepthSource::allocateBuffers()
 	height = videoMode.getResolutionY();
 
     
-    int dataSize = width*height*4; 
-    oniDepthPixels = new DepthPixel[dataSize];
+
     
     currentPixels = new ofPixels();
     currentPixels->allocate(width, height, OF_IMAGE_COLOR_ALPHA);
@@ -111,25 +114,23 @@ void DepthSource::allocateBuffers()
         
     }
  
-
+    int dataSize = width*height*4; 
+    oniDepthPixels = new DepthPixel[dataSize];
     
-	texture.allocate(width, height, GL_RGBA);
-
 	if (doRawDepth)
 	{
         currentRawPixels = new ofShortPixels();
-        //currentRawPixels->allocate(width, height, OF_PIXELS_MONO);
         currentRawPixels->setFromExternalPixels(oniDepthPixels, width, height, 1);
         
         if (doDoubleBuffering) 
         {
             ofLogVerbose(__func__) << "doDoubleBuffering: " << doDoubleBuffering;
             backRawPixels = new ofShortPixels();
-            //backRawPixels->allocate(width, height, OF_PIXELS_MONO);
             backRawPixels->setFromExternalPixels(oniDepthPixels, width, height, 1);
         }
 	}
 
+    texture.allocate(width, height, GL_RGBA);
 }
 
 void DepthSource::onNewFrame(VideoStream& stream)
@@ -146,11 +147,7 @@ void DepthSource::onNewFrame(VideoStream& stream)
     {
         if (doDoubleBuffering)
         {
-            //backRawPixels->setFromExternalPixels(oniDepthPixels, width, height, 1);
             swap(backRawPixels,currentRawPixels);
-        }else
-        {
-            //currentRawPixels->setFromExternalPixels(oniDepthPixels, width, height, 1);
         }
     }
 
@@ -168,15 +165,20 @@ void DepthSource::onNewFrame(VideoStream& stream)
     {
         unsigned char * pixel = pixelBuffer->getPixels() + y * width * 4;
         unsigned char * pixelna = noAlphaPixels->getPixels() + y * width;
-        for (unsigned short  x = 0; x < width; x++, oniDepthPixels++, pixel += 4, pixelna ++)
+        for (unsigned short  x = 0;
+             x < width;
+             x++,
+             oniDepthPixels++,
+             pixel += 4,
+             pixelna++)
         {
             unsigned char red = 0;
             unsigned char green = 0;
             unsigned char blue = 0;
             unsigned char alpha = 255;
 
-            if( (*oniDepthPixels > nearClipping) && (*oniDepthPixels< farClipping) ){
-                //unsigned char a = (unsigned char)(((*oniDepthPixels) / ( deviceMaxDepth / max)));
+            if( (*oniDepthPixels > nearClipping) && (*oniDepthPixels< farClipping) )
+            {
                 unsigned char a = ofMap(*oniDepthPixels, nearClipping, farClipping, nearColor, farColor, true);
                 red		= a;
                 green	= a;
@@ -194,7 +196,8 @@ void DepthSource::onNewFrame(VideoStream& stream)
                 {
                     pixel[3] = alpha;
                 }
-            }else{
+            }else
+            {
                 pixel[0] = 0;
                 pixel[1] = 0;
                 pixel[2] = 0;

@@ -91,14 +91,12 @@ void RGBSource::allocateBuffers()
     int dataSize = width*height*3;
     videoPixels = new unsigned char[dataSize];
     currentPixels = new ofPixels();
-    //currentPixels->allocate(width, height, OF_IMAGE_COLOR);
     currentPixels->setFromExternalPixels(videoPixels, width, height, 3);
 
     if (doDoubleBuffering) 
     {
         ofLogVerbose(__func__) << "doDoubleBuffering: " << doDoubleBuffering;
         backPixels = new ofPixels();
-        //backPixels->allocate(width, height, OF_IMAGE_COLOR);
         backPixels->setFromExternalPixels(videoPixels, width, height, 3);
     }
 
@@ -114,13 +112,11 @@ void RGBSource::onNewFrame(VideoStream& stream)
     
 	if (doDoubleBuffering) 
 	{
-		//backPixels->setFromPixels(videoPixels, width, height, OF_IMAGE_COLOR);
         backPixels->setFromExternalPixels(videoPixels, width, height, 3);
 		swap(backPixels, currentPixels);
 	}else 
 	{
         currentPixels->setFromExternalPixels(videoPixels, width, height, 3);
-		//currentPixels->setFromPixels(videoPixels, width, height, OF_IMAGE_COLOR);
 	}
 
 	

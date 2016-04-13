@@ -5,8 +5,8 @@ void ofApp::setup()
 {
     ofSetLogLevel(OF_LOG_VERBOSE);
     
-    cameraWidth = 320;
-    cameraHeight = 240;
+    cameraWidth = 640;
+    cameraHeight = 480;
     
 
     settings.width 	= cameraWidth;
