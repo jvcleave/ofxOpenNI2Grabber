@@ -15,6 +15,7 @@ RGBSource::RGBSource()
 	height = 0;
 	backPixels = NULL;
 	currentPixels = NULL;
+    videoPixels = NULL;
 	doDoubleBuffering = true;
 	isOn = false;
 }
@@ -86,25 +87,40 @@ void RGBSource::allocateBuffers()
 	videoMode = videoStream.getVideoMode();
 	width = videoMode.getResolutionX();
 	height = videoMode.getResolutionY();
-	
-	pixels[0].allocate(width, height, OF_IMAGE_COLOR);
-	pixels[1].allocate(width, height, OF_IMAGE_COLOR);
-	currentPixels = &pixels[0];
-	backPixels = &pixels[1];
-	
+    
+    int dataSize = width*height*3;
+    videoPixels = new unsigned char[dataSize];
+    currentPixels = new ofPixels();
+    //currentPixels->allocate(width, height, OF_IMAGE_COLOR);
+    currentPixels->setFromExternalPixels(videoPixels, width, height, 3);
+
+    if (doDoubleBuffering) 
+    {
+        ofLogVerbose(__func__) << "doDoubleBuffering: " << doDoubleBuffering;
+        backPixels = new ofPixels();
+        //backPixels->allocate(width, height, OF_IMAGE_COLOR);
+        backPixels->setFromExternalPixels(videoPixels, width, height, 3);
+    }
+
+    
 	texture.allocate(width, height, GL_RGB);
 }
 void RGBSource::onNewFrame(VideoStream& stream)
 {
 	//ofLogVerbose() << "RGBSource::onNewFrame";
 	stream.readFrame(&videoFrameRef);
+    
+    videoPixels = (unsigned char *)videoFrameRef.getData();
+    
 	if (doDoubleBuffering) 
 	{
-		backPixels->setFromPixels((unsigned char *)videoFrameRef.getData(), width, height, OF_IMAGE_COLOR);
+		//backPixels->setFromPixels(videoPixels, width, height, OF_IMAGE_COLOR);
+        backPixels->setFromExternalPixels(videoPixels, width, height, 3);
 		swap(backPixels, currentPixels);
 	}else 
 	{
-		currentPixels->setFromPixels((unsigned char *)videoFrameRef.getData(), width, height, OF_IMAGE_COLOR);
+        currentPixels->setFromExternalPixels(videoPixels, width, height, 3);
+		//currentPixels->setFromPixels(videoPixels, width, height, OF_IMAGE_COLOR);
 	}
 
 	

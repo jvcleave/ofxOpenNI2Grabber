@@ -14,7 +14,7 @@ public:
 	VideoStream videoStream;
 	
 	ofTexture texture;
-	ofPixels pixels[2];
+    unsigned char* videoPixels;
 	ofPixels* backPixels;
 	ofPixels* currentPixels;
 	

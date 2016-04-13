@@ -5,8 +5,8 @@ void ofApp::setup()
 {
     ofSetLogLevel(OF_LOG_VERBOSE);
     
-    cameraWidth = 640;
-    cameraHeight = 480;
+    cameraWidth = 320;
+    cameraHeight = 240;
     
 
     settings.width 	= cameraWidth;
@@ -25,6 +25,9 @@ void ofApp::setup()
     settings.useOniFile = false;
     settings.oniFilePath = "UNDEFINED";
 
+    settings.doColorDoubleBuffering = true;
+    settings.doDepthDoubleBuffering = true;
+    settings.doIRDoubleBuffering = true;
 
 	isReady = oniGrabber.setup(settings);
 
