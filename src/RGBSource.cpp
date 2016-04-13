@@ -78,7 +78,7 @@ void RGBSource::update()
 
 void RGBSource::draw()
 {
-	texture.loadData(*currentPixels);
+	//texture.loadData(*currentPixels);
 	texture.draw(0, 0);
 }
 
