@@ -55,20 +55,20 @@ void ofApp::draw()
     
     ofPushMatrix();
     int offset = 0;
-    if (settings.doColor)
+    if (oniGrabber.isColorAvailable())
     {
         oniGrabber.getRGBTextureReference().draw(offset, 0);
         offset+=cameraWidth;
     }
     
-    if (settings.doDepth)
+    if (oniGrabber.isDepthAvailable())
     {
         ofTranslate(offset, 0);
         oniGrabber.getDepthTextureReference().draw(0, 0);
         offset+=cameraWidth;
     }
     
-    if (settings.doIr)
+    if (oniGrabber.isIRAvailable())
     {
         ofTranslate(offset, 0);
         oniGrabber.getIRTextureReference().draw(0, 0);

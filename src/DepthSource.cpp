@@ -6,6 +6,7 @@ DepthSource::DepthSource()
 	height = 0;
 	backPixels = NULL;
 	currentPixels = NULL;
+    oniDepthPixels = NULL;
 	deviceMaxDepth = 0;
 	doDoubleBuffering = true;
 	doRawDepth = false;
@@ -92,6 +93,10 @@ void DepthSource::allocateBuffers()
 	width = videoMode.getResolutionX();
 	height = videoMode.getResolutionY();
 
+    
+    int dataSize = width*height*4; 
+    oniDepthPixels = new DepthPixel[dataSize];
+    
     currentPixels = new ofPixels();
     currentPixels->allocate(width, height, OF_IMAGE_COLOR_ALPHA);
     
@@ -103,6 +108,7 @@ void DepthSource::allocateBuffers()
         ofLogVerbose(__func__) << "doDoubleBuffering: " << doDoubleBuffering;
         backPixels = new ofPixels();
         backPixels->allocate(width, height, OF_IMAGE_COLOR_ALPHA);
+        
     }
  
 
@@ -112,13 +118,15 @@ void DepthSource::allocateBuffers()
 	if (doRawDepth)
 	{
         currentRawPixels = new ofShortPixels();
-        currentRawPixels->allocate(width, height, OF_PIXELS_MONO);
+        //currentRawPixels->allocate(width, height, OF_PIXELS_MONO);
+        currentRawPixels->setFromExternalPixels(oniDepthPixels, width, height, 1);
         
         if (doDoubleBuffering) 
         {
             ofLogVerbose(__func__) << "doDoubleBuffering: " << doDoubleBuffering;
             backRawPixels = new ofShortPixels();
-            backRawPixels->allocate(width, height, OF_PIXELS_MONO);
+            //backRawPixels->allocate(width, height, OF_PIXELS_MONO);
+            backRawPixels->setFromExternalPixels(oniDepthPixels, width, height, 1);
         }
 	}
 
@@ -131,17 +139,18 @@ void DepthSource::onNewFrame(VideoStream& stream)
     {
         ofLogError() << "DepthSource readFrame FAIL: " <<  OpenNI::getExtendedError();
     }
-    const DepthPixel* oniDepthPixels = (const DepthPixel*)videoFrameRef.getData();
+    
+    oniDepthPixels = (DepthPixel*)videoFrameRef.getData();
 
     if (doRawDepth)
     {
         if (doDoubleBuffering)
         {
-            backRawPixels->setFromPixels(oniDepthPixels, width, height, 1);
+            //backRawPixels->setFromExternalPixels(oniDepthPixels, width, height, 1);
             swap(backRawPixels,currentRawPixels);
         }else
         {
-            currentRawPixels->setFromPixels(oniDepthPixels, width, height, 1);
+            //currentRawPixels->setFromExternalPixels(oniDepthPixels, width, height, 1);
         }
     }
 

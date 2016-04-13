@@ -54,21 +54,20 @@ public:
 	ofTexture& getRGBTextureReference();
 	ofTexture& getIRTextureReference();
 	
-    
-    bool isIRAvailable()
-    {
-        return irAvailable;
-    }
-    
-    bool isDepthAvailable()
-    {
-        return depthAvailable;
-    }
-    
+
     bool isColorAvailable()
     {
         return colorAvailable;
     }
+    bool isDepthAvailable()
+    {
+        return depthAvailable;
+    }
+    bool isIRAvailable()
+    {
+        return irAvailable;
+    }
+   
     
 protected:
 	void threadedFunction();

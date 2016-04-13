@@ -25,7 +25,10 @@ void ofApp::setup()
     settings.useOniFile = false;
     settings.oniFilePath = "UNDEFINED";
 
-
+    settings.doColorDoubleBuffering = true;
+    settings.doDepthDoubleBuffering = true;
+    settings.doIRDoubleBuffering = true;
+    
 	isReady = oniGrabber.setup(settings);
 
     int nearClip = 50;
@@ -51,27 +54,28 @@ void ofApp::draw()
 
     ofPushMatrix();
     int offset = 0;
-    if (settings.doColor)
+    if (oniGrabber.isColorAvailable())
     {
         oniGrabber.getRGBTextureReference().draw(offset, 0);
         offset+=cameraWidth;
     }
     
-    if (settings.doDepth)
+    if (oniGrabber.isDepthAvailable())
     {
         ofTranslate(offset, 0);
         oniGrabber.getDepthTextureReference().draw(0, 0);
         offset+=cameraWidth;
     }
     
-    if (settings.doIr)
+    if (oniGrabber.isIRAvailable())
     {
         ofTranslate(offset, 0);
         oniGrabber.getIRTextureReference().draw(0, 0);
         offset+=cameraWidth;
     }
     ofPopMatrix();
-  
+    
+    
     
     ofDrawBitmapStringHighlight(ofToString(ofGetFrameRate()) + " fps", 40, 40, ofColor(0, 0, 0, 128), ofColor::yellow);
 }
