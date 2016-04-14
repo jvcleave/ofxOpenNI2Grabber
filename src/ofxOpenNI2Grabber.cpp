@@ -163,34 +163,38 @@ void ofxOpenNI2Grabber::draw()
 	if (depthSource.isOn) depthSource.draw();
 }
 
-ofPixels& ofxOpenNI2Grabber::getDepthPixels()
+ofPixels* ofxOpenNI2Grabber::getDepthPixels()
 {
-	Poco::ScopedLock<ofMutex> lock(mutex);
-	return *depthSource.currentPixels;
+    ofScopedLock(mutex);
+	return depthSource.currentPixels;
 }
 
-ofShortPixels& ofxOpenNI2Grabber::getDepthRawPixels()
+ofShortPixels* ofxOpenNI2Grabber::getDepthRawPixels()
 {
-	Poco::ScopedLock<ofMutex> lock(mutex);
-	
-	if (!settings.doRawDepth)
-	{
-		ofLogError() << "settings.doRawPixels is FALSE";
-		
-	}
-	return *depthSource.currentRawPixels;
+	ofScopedLock(mutex);
+	return depthSource.currentRawPixels;
 }
 
-ofPixels& ofxOpenNI2Grabber::getRGBPixels()
+ofPixels* ofxOpenNI2Grabber::getRGBPixels()
 {
-	Poco::ScopedLock<ofMutex> lock(mutex);
-	return *rgbSource.currentPixels;
+	ofScopedLock(mutex);
+	return rgbSource.currentPixels;
 }
 
-ofPixels& ofxOpenNI2Grabber::getIRPixels()
+ofPixels* ofxOpenNI2Grabber::getIRPixels()
 {
-	Poco::ScopedLock<ofMutex> lock(mutex);
-	return *irSource.currentPixels;
+	ofScopedLock(mutex);
+	return irSource.currentPixels;
+}
+
+int ofxOpenNI2Grabber::getDeviceMaxDepth()
+{
+    int result = 0;
+    if (isDepthAvailable())
+    {
+        result = depthSource.deviceMaxDepth;
+    }
+    return result;
 }
 
 ofTexture& ofxOpenNI2Grabber::getDepthTextureReference()
@@ -207,6 +211,7 @@ ofTexture& ofxOpenNI2Grabber::getIRTextureReference()
 {
 	return irSource.texture;
 }
+
 ofxOpenNI2Grabber::~ofxOpenNI2Grabber()
 {
     

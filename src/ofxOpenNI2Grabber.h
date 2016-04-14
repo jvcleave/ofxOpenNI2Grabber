@@ -45,10 +45,10 @@ public:
 	
 	ofVec3f convertDepthToWorld(int depthX, int depthY);
 	
-	ofPixels&       getDepthPixels();
-	ofShortPixels&  getDepthRawPixels();
-	ofPixels&       getRGBPixels();
-	ofPixels&       getIRPixels();
+	ofPixels*       getDepthPixels();
+	ofShortPixels*  getDepthRawPixels();
+	ofPixels*       getRGBPixels();
+	ofPixels*       getIRPixels();
 	
 	ofTexture& getDepthTextureReference();
 	ofTexture& getRGBTextureReference();
@@ -68,6 +68,7 @@ public:
         return irAvailable;
     }
    
+    int getDeviceMaxDepth();
     
 protected:
 	void threadedFunction();

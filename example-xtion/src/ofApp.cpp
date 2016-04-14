@@ -28,7 +28,7 @@ void ofApp::setup()
     settings.doColorDoubleBuffering = true;
     settings.doDepthDoubleBuffering = true;
     settings.doIRDoubleBuffering = true;
-
+    
 	isReady = oniGrabber.setup(settings);
 
     int nearClip = 50;
